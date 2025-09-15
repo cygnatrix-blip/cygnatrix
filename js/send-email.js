@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   // Initialize Resend with your API key from Vercel's environment variables
-  const resend = new Resend('re_hnjUrgxu_JWcGfXkF4FbFWjgtnQMPTjJ3');
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const { name, email, subject, message } = req.body;
 
   // Basic validation
