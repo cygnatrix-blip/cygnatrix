@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     // Send the email
     const { data, error } = await resend.emails.send({
       from: 'Cygnatrix Website <onboarding@resend.dev>', // Resend's free plan sends from this
-      to: ['cygnatrix@gmail.com'], // YOUR email address
+      to: ['support@cygnatrix.com'], // YOUR email address
       reply_to: email, // Set the sender's email as the reply-to
       subject: `New Contact Form Subject: ${subject}`,
       html: `
