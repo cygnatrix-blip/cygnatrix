@@ -1,8 +1,7 @@
 // This function runs once the document is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
     
-    // --- START: NEW COMPONENT-LOADING CODE ---
-    // This part is missing from your file.
+    // --- START: COMPONENT-LOADING CODE ---
     const loadComponent = (id, url) => {
         fetch(url)
             .then(response => {
@@ -23,62 +22,50 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load header and footer
     loadComponent("header-placeholder", "components/header.html");
     loadComponent("footer-placeholder", "components/footer.html");
-    // --- END: NEW COMPONENT-LOADING CODE ---
+    // --- END: COMPONENT-LOADING CODE ---
 
 
-    // --- YOUR EXISTING ANIMATION CODE (This part is correct) ---
-    
-    // 1. Select all elements we want to animate
+    // --- START: ANIMATION CODE ---
     const sectionsToAnimate = document.querySelectorAll('.fade-in-section');
 
-    // 2. Check if the browser supports IntersectionObserver
-    if (!('IntersectionObserver' in window)) {
-        // If not, just make all sections visible immediately
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        sectionsToAnimate.forEach(section => {
+            observer.observe(section);
+        });
+    } else {
+        // Fallback for older browsers
         sectionsToAnimate.forEach(section => {
             section.classList.add('is-visible');
         });
-        return; // Stop the script
     }
+    // --- END: ANIMATION CODE ---
 
-    // 3. Create the Observer
-    // This "watches" for elements to enter the viewport
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            // entry.isIntersecting is true if the element is on screen
-            if (entry.isIntersecting) {
-                // Add the 'is-visible' class to trigger the CSS transition
-                entry.target.classList.add('is-visible');
-                
-                // Stop observing this element since it's already visible
-                observer.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.1 // Trigger when 10% of the element is visible
-    });
 
-    // 4. Tell the observer to watch each of our sections
-    sectionsToAnimate.forEach(section => {
-        observer.observe(section);
-    });
-
-});
-
-// --- NEW: Contact Form Handler ---
+    // --- START: CONTACT FORM HANDLER ---
+    // (This was moved inside)
     const contactForm = document.getElementById('contact-form');
     const submitButton = document.getElementById('submit-button');
     const formStatus = document.getElementById('form-status');
 
     if (contactForm) {
         contactForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault(); 
             
-            // Show sending status
             submitButton.disabled = true;
             submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
             formStatus.innerHTML = '';
 
-            // Collect form data
             const formData = new FormData(contactForm);
             const data = {
                 name: formData.get('name'),
@@ -87,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 message: formData.get('message'),
             };
 
-            // Send data to our Vercel serverless function
             fetch('/api/send-email', {
                 method: 'POST',
                 headers: {
@@ -95,25 +81,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 body: JSON.stringify(data),
             })
-            .then(response => response.json())
+            .then(response => {
+                // Check if the response is valid JSON before parsing
+                if (!response.ok) {
+                    // If the server response is an error (like 404 or 500)
+                    // throw an error to be caught by the .catch() block
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(result => {
                 if (result.success) {
-                    // Success
                     submitButton.disabled = false;
                     submitButton.innerHTML = 'Send Message';
                     formStatus.innerHTML = '<div class="alert alert-success" role="alert">Message sent successfully! We will get back to you soon.</div>';
-                    contactForm.reset(); // Clear the form
+                    contactForm.reset();
                 } else {
-                    // Failure
                     throw new Error(result.error || 'An unknown error occurred.');
                 }
             })
             .catch(error => {
-                // Error
                 submitButton.disabled = false;
                 submitButton.innerHTML = 'Send Message';
-                formStatus.innerHTML = `<div class="alert alert-danger" role="alert"><strong>Error:</strong> ${error.message}</div>`;
+                // This is where you are seeing the error
+                // The 'error.message' might contain 'Unexpected token 'T''
+                // I've simplified it to a cleaner message.
+                formStatus.innerHTML = `<div class="alert alert-danger" role="alert"><strong>Error:</strong> Could not send message. The server is not responding correctly. Please try again later.</div>`;
+                console.error('Fetch Error:', error);
             });
         });
     }
-    // --- END: Contact Form Handler ---
+    // --- END: CONTACT FORM HANDLER ---
+
+}); // <-- The main DOMContentLoaded listener closes here
