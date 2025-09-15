@@ -1,0 +1,156 @@
+/* --- Import a Modern Font --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* --- Define Your Custom Brand Colors --- */
+:root {
+    --cyg-primary: #087990;     /* A deep, professional teal */
+    --cyg-primary-dark: #065a6b; /* For hover states */
+    --cyg-secondary: #4a5568;  /* A professional slate-gray */
+    --cyg-light-gray: #f8f9fa; /* A very light gray for backgrounds */
+    --cyg-dark: #1a202c;       /* A dark gray for text */
+}
+
+/* --- Global Style Overrides --- */
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--cyg-secondary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600; /* Bolder headings */
+    color: var(--cyg-dark);
+}
+
+/* --- Override Bootstrap Primary Color --- */
+.btn-primary {
+    background-color: var(--cyg-primary);
+    border-color: var(--cyg-primary);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: var(--cyg-primary-dark);
+    border-color: var(--cyg-primary-dark);
+    transform: translateY(-2px); /* Subtle lift on hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-primary {
+    border-color: var(--cyg-primary);
+    color: var(--cyg-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--cyg-primary);
+    color: white;
+}
+
+/* --- Custom Text & Links --- */
+.text-primary {
+    color: var(--cyg-primary) !important;
+}
+
+a.text-primary-hover:hover {
+    color: var(--cyg-primary-dark) !important;
+}
+
+a {
+    color: var(--cyg-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--cyg-primary-dark);
+    text-decoration: underline;
+}
+
+/* --- Custom Component Styles --- */
+
+/* Hero Gradient Background */
+.hero-gradient {
+    background: linear-gradient(135deg, var(--cyg-primary) 0%, #0d9488 100%);
+}
+
+/* Custom Nav Brand */
+.navbar-brand-custom {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--cyg-primary);
+}
+
+/* Custom Card Style for Services */
+.service-card {
+    border: none;
+    border-radius: 0.75rem; /* Softer rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out;
+    height: 100%;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Contact Form */
+.contact-card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    overflow: hidden; /* To contain the gradient */
+}
+
+.contact-card-header {
+    background: linear-gradient(135deg, var(--cyg-primary) 0%, #0d9488 100%);
+    color: white;
+}
+
+/* --- 1. Hero Image Style --- */
+/* This replaces the .hero-gradient class */
+.hero-section {
+    position: relative;
+    padding-top: 8rem; /* More padding for a bigger impact */
+    padding-bottom: 8rem;
+    
+    /* Add your image URL here. 
+      You can use an absolute URL or a local file path like 'images/hero-bg.jpg'
+      I recommend a high-quality, professional image.
+    */
+    background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}
+
+/* This adds a dark, semi-transparent overlay so the white text is readable */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 25, 47, 0.6); /* A dark blue/black overlay */
+    z-index: 1;
+}
+
+/* We use z-index to make sure the text stays on top of the overlay */
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* --- 2. Animation Classes --- */
+/* This is the starting state for our animated elements (hidden) */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(20px); /* Start 20px lower */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* This is the final state (visible) that JavaScript will add */
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
